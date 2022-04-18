@@ -1,25 +1,30 @@
 const express = require('express');
 const app = express();
 
+// app.use(logger);
 
-app.get('/books', (req, res) => {
-    console.log("books");
+app.get('/books', logger,  (req, res) => {
+    res.send(req.routerName);
 })
 
-app.get('/libraries', (req, res) => {
-    console.log('libraries');
+app.get('/libraries', checkPermission, (req, res) => {
+    res.send(req.pathRoute);
 })
 
-app.get('/authors', (req, res) => {
-    console.log('authors');
+app.get('/authors', checkPermission, (req, res) => {
+    res.send(req.pathRoute);
 })
 
 function logger(req, res, next) {
-
+    var pathName = req.route.path;
+    req.routerName = {name: pathName};
+    next();
 }
 
 function checkPermission(req, res, next){
-
+    var routeName = req.route.path;
+    req.pathRoute = {name: routeName, checkPermission: true};
+    next();
 }
 
 app.listen(9006, () => {
